@@ -1,10 +1,7 @@
-import { NavLink } from "react-router-dom"
-import {
-  MAIN_TOAST_CONTAINER_ID,
-  ROUTES,
-} from "@/shared/lib/constants"
+import { MAIN_TOAST_CONTAINER_ID } from "@/shared/lib/"
 import { Bounce, ToastContainer } from "react-toastify"
-import { Box, Container, Stack } from "@chakra-ui/react"
+import { Header } from "./Header"
+import { Footer } from "./Footer"
 
 export const Layout = ({ children }: React.PropsWithChildren) => {
   return (
@@ -28,31 +25,5 @@ export const Layout = ({ children }: React.PropsWithChildren) => {
         transition={Bounce}
       />
     </>
-  )
-}
-
-export const Header = () => {
-  return (
-    <Box as={"header"}>
-      <Container>
-        <Stack direction={"row"} spaceX={4}>
-          <li>
-            <NavLink to={ROUTES.HOME}>Главная</NavLink>
-          </li>
-          <li>
-            {/* <AuthButton /> */}
-            <NavLink to={ROUTES.LOGIN}>Login</NavLink>
-          </li>
-        </Stack>
-      </Container>
-    </Box>
-  )
-}
-
-export const Footer = () => {
-  return (
-    <footer>
-      <Container>FOOTER</Container>
-    </footer>
   )
 }

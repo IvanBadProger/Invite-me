@@ -1,0 +1,14 @@
+import { create } from "zustand"
+import { authService } from "../api/AuthService"
+
+interface AuthStore {
+  isAuth: boolean
+
+  setIsAuth: (state: boolean) => void
+}
+
+export const useAuth = create<AuthStore>((set) => ({
+  isAuth: authService.isAuth(),
+
+  setIsAuth: (state) => set({ isAuth: state }),
+}))

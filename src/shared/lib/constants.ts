@@ -1,6 +1,7 @@
 export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
+  DASHBOARD: "/dashboard",
 }
 
 export const MAIN_TOAST_CONTAINER_ID = "main-toast-container-id"
@@ -17,3 +18,7 @@ export const MESSAGES = {
   POSITIVE_FIELD: "Значение поля должно быть больше 0",
   NONNEGATIVE_FIELD: "Значение поля не может быть меньше нуля",
 }
+
+export const TOKEN_EXPIRATION_DAYS = import.meta.env
+  .VITE_TOKE_EXPIRATION_DAYS
+export const BASE_API_URL = import.meta.env.VITE_API_URL

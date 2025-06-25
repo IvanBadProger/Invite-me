@@ -7,17 +7,12 @@ type FormProps = {
   formTitle?: string
 } & Omit<React.FormHTMLAttributes<HTMLFormElement>, "aria-labelledby">
 
-export const Form = ({
-  children,
-  className,
-  formTitle,
-  ...rest
-}: FormProps) => {
+export const Form = ({ children, formTitle, ...rest }: FormProps) => {
   const formId = useId()
   const titleId = `${formId}-title`
 
   return (
-    <form className={className} aria-labelledby={titleId} {...rest}>
+    <form aria-labelledby={titleId} {...rest}>
       {formTitle && <Heading as={"div"} id={titleId} />}
 
       {children}

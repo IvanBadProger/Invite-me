@@ -1,10 +1,5 @@
-import clsx from "clsx"
-import styles from "./Spinner.module.scss"
+import styles from "./Spinner.module.css"
 
-type SpinnerProps = { className?: string }
-
-export const Spinner = (props: SpinnerProps) => {
-  const { className } = props
-
-  return <div className={clsx(styles.spinner, className)} />
+export const Spinner = () => {
+  return <div className={styles.spinner} />
 }
