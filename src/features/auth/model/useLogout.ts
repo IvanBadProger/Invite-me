@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useAuth } from "./useAuth"
-import { authService } from "../api/AuthService"
+import { authService } from "../api/auth.service"
 
 export const useLogout = () => {
   const { isAuth, setIsAuth } = useAuth()

@@ -1,4 +1,4 @@
-export { ApiService } from "./ApiService"
+export { ApiService } from "./api.service"
 
 export const STATUS_CODES = {
   CONTINUE: 100,

@@ -7,7 +7,6 @@ export class TokenService {
   constructor() {}
 
   public setToken(token: string) {
-    console.log(token)
     Cookies.set(this.COOKIE_KEY, token, {
       expires: TOKEN_EXPIRATION_DAYS,
     })

@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { authService } from "../api/AuthService"
+import { authService } from "../api/auth.service"
 
 interface AuthStore {
   isAuth: boolean

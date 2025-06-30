@@ -1,11 +1,8 @@
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import { loginSchema, type LoginFields } from "."
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useEffect } from "react"
-import { useNavigate } from "react-router"
-import { ROUTES } from "@/shared/lib"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { authService } from "../api/AuthService"
+import { authService } from "../api/auth.service"
 import { useAuth } from "./useAuth"
 
 export const useLoginForm = () => {
@@ -18,8 +15,7 @@ export const useLoginForm = () => {
     resolver: zodResolver(loginSchema),
   })
 
-  const { isAuth, setIsAuth } = useAuth()
-  const navigate = useNavigate()
+  const { setIsAuth } = useAuth()
 
   const queryClient = useQueryClient()
   const loginMutation = useMutation({
@@ -30,18 +26,11 @@ export const useLoginForm = () => {
       queryClient.invalidateQueries({
         queryKey: [authService.QUERY_KEY],
       })
-      console.log("dfgkdl")
     },
     onSuccess() {
       setIsAuth(true)
     },
   })
-
-  useEffect(() => {
-    if (isAuth) {
-      navigate(ROUTES.HOME)
-    }
-  }, [isAuth, navigate])
 
   const onSubmit = (data: LoginFields) => {
     loginMutation.mutate(data)
@@ -49,7 +38,6 @@ export const useLoginForm = () => {
 
   return {
     isPending: loginMutation.isPending,
-    isAuth,
     onSubmit: handleSubmit(onSubmit),
     register,
     formErrors: errors,

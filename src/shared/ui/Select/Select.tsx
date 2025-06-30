@@ -1,41 +1,46 @@
-import {
-  Select as ChakraSelect,
-  type ListCollection,
-  Portal,
-} from "@chakra-ui/react"
+import { Field, NativeSelect, Spinner } from "@chakra-ui/react"
 
-type SelectProps = {
-  options: ListCollection
+export type Option = {
+  value: string
   label: string
 }
 
+export type SelectProps = {
+  placeholder?: string
+  errorMessage?: string
+  options: Option[]
+  label: string
+  size?: "sm" | "md" | "lg" | "xl" | "xs"
+  isLoading?: boolean
+} & React.SelectHTMLAttributes<HTMLSelectElement>
+
 export const Select = (props: SelectProps) => {
-  const { options, label } = props
+  const {
+    placeholder,
+    label,
+    errorMessage,
+    options,
+    size,
+    isLoading,
+    ...rest
+  } = props
 
   return (
-    <ChakraSelect.Root collection={options} size="sm" width="320px">
-      <ChakraSelect.HiddenSelect />
-      <ChakraSelect.Label>{label}</ChakraSelect.Label>
-      <ChakraSelect.Control>
-        <ChakraSelect.Trigger>
-          <ChakraSelect.ValueText placeholder={label} />
-        </ChakraSelect.Trigger>
-        <ChakraSelect.IndicatorGroup>
-          <ChakraSelect.Indicator />
-        </ChakraSelect.IndicatorGroup>
-      </ChakraSelect.Control>
-      <Portal>
-        <ChakraSelect.Positioner>
-          <ChakraSelect.Content>
-            {options.items.map((option) => (
-              <ChakraSelect.Item item={option} key={option.value}>
-                {option.label}
-                <ChakraSelect.ItemIndicator />
-              </ChakraSelect.Item>
-            ))}
-          </ChakraSelect.Content>
-        </ChakraSelect.Positioner>
-      </Portal>
-    </ChakraSelect.Root>
+    <Field.Root invalid={!!errorMessage}>
+      <Field.Label>{isLoading ? <Spinner /> : label}</Field.Label>
+      <NativeSelect.Root size={size}>
+        <NativeSelect.Field placeholder={placeholder} {...rest}>
+          {options.map(({ label, value }) => {
+            return (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            )
+          })}
+        </NativeSelect.Field>
+        <NativeSelect.Indicator />
+      </NativeSelect.Root>
+      <Field.ErrorText>{errorMessage}</Field.ErrorText>
+    </Field.Root>
   )
 }

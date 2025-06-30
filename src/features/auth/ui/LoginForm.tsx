@@ -1,4 +1,4 @@
-import { Form, Field } from "@/shared/ui"
+import { Field, Form } from "@/shared/ui"
 import { Button, Input } from "@chakra-ui/react"
 import { useLoginForm } from "../model"
 

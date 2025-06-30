@@ -2,7 +2,10 @@ export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
   DASHBOARD: "/dashboard",
-}
+  SERVICES: "dashboard/services",
+  SERVICES_CREATE: "dashboard/services/create",
+  SERVICES_EDIT: "dashboard/services/edit",
+} as const
 
 export const MAIN_TOAST_CONTAINER_ID = "main-toast-container-id"
 export const MESSAGES = {
