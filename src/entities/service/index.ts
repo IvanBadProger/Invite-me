@@ -1,8 +1,8 @@
+export { serviceService } from "./api"
 export { useService, useServices } from "./model"
-
 export {
+  serviceEditSchema as ServiceEditSchema,
   serviceCreateSchema,
-  ServiceEditSchema,
   serviceReducedSchema,
   serviceSchema,
   type CommonServiceOptions,
@@ -12,7 +12,4 @@ export {
   type ServiceReduced,
   type ServiceType,
 } from "./model/types"
-
-export { serviceService } from "./api"
-
 export { ServiceCard, ServicesSelect } from "./ui"

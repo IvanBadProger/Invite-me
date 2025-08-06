@@ -7,8 +7,7 @@ export const useServices = () => {
 
   const { data, ...rest } = useQuery({
     queryKey: [serviceService.QUERY_KEY],
-    queryFn: (meta) =>
-      serviceService.getAll({ isAdmin: isAuth }, meta),
+    queryFn: (meta) => serviceService.getAll({ isAdmin: isAuth }, meta),
     placeholderData: keepPreviousData,
     select: (data) => data.data.data,
   })

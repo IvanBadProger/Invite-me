@@ -1,6 +1,8 @@
+export { useService } from "../model/useService"
+export { useServices } from "../model/useServices"
 export {
   serviceCreateSchema as ServiceCreateSchema,
-  ServiceEditSchema,
+  serviceEditSchema as ServiceEditSchema,
   serviceReducedSchema,
   serviceSchema,
   type CommonServiceOptions,
@@ -10,6 +12,3 @@ export {
   type ServiceReduced,
   type ServiceType,
 } from "./types"
-
-export { useService } from "../model/useService"
-export { useServices } from "../model/useServices"

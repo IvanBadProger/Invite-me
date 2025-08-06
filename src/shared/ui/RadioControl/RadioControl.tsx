@@ -1,16 +1,15 @@
 import { HStack, RadioGroup } from "@chakra-ui/react"
-import { Controller, type Control } from "react-hook-form"
+import { Controller, type Control, type FieldValues, type Path } from "react-hook-form"
 import type { Option } from "../Select/Select"
 
-type RadioControlProps = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: Control<any, any, any>
+type RadioControlProps<T extends FieldValues> = {
+  control: Control<T>
   defaultValue?: string
   radioOptions: Option[]
-  name: string
+  name: Path<T>
 }
 
-export const RadioControl = (props: RadioControlProps) => {
+export const RadioControl = <T extends FieldValues>(props: RadioControlProps<T>) => {
   const { control, defaultValue, radioOptions, name } = props
 
   return (
@@ -28,15 +27,10 @@ export const RadioControl = (props: RadioControlProps) => {
         >
           <HStack gap="6">
             {radioOptions.map((option) => (
-              <RadioGroup.Item
-                key={option.value}
-                value={option.value}
-              >
+              <RadioGroup.Item key={option.value} value={option.value}>
                 <RadioGroup.ItemHiddenInput onBlur={field.onBlur} />
                 <RadioGroup.ItemIndicator />
-                <RadioGroup.ItemText>
-                  {option.label}
-                </RadioGroup.ItemText>
+                <RadioGroup.ItemText>{option.label}</RadioGroup.ItemText>
               </RadioGroup.Item>
             ))}
           </HStack>

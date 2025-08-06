@@ -6,6 +6,9 @@ import { authService } from "../api/auth.service"
 import { useAuth } from "./useAuth"
 
 export const useLoginForm = () => {
+  const setIsAuth = useAuth((state) => state.setIsAuth)
+  const queryClient = useQueryClient()
+
   const {
     register,
     handleSubmit,
@@ -15,12 +18,8 @@ export const useLoginForm = () => {
     resolver: zodResolver(loginSchema),
   })
 
-  const { setIsAuth } = useAuth()
-
-  const queryClient = useQueryClient()
   const loginMutation = useMutation({
-    mutationFn: (variables: LoginFields) =>
-      authService.login(variables),
+    mutationFn: (variables: LoginFields) => authService.login(variables),
     retry: false,
     onSettled() {
       queryClient.invalidateQueries({

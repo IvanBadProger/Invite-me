@@ -1,23 +1,21 @@
 import { ApiService, STATUS_CODES } from "@/shared/api"
-import axios from "axios"
-import type { CommonServiceOptions } from "../model"
+import axios, { type AxiosResponse } from "axios"
 import type {
+  CommonServiceOptions,
   Service,
   ServiceCreate,
   ServiceEdit,
   ServiceReduced,
-} from "../model/types"
+} from "../model"
 
 class ServicesService extends ApiService {
+  private readonly ADMIN_PREFIX = "/admin/services"
+  private readonly BASE_SERVICES_PATH = "/services"
   public readonly QUERY_KEY = "service"
 
   constructor() {
     super()
-
-    this.baseAxiosInstance.interceptors.response.use(
-      (res) => res,
-      this.handleError
-    )
+    this.baseAxiosInstance.interceptors.response.use((res) => res, this.handleError)
   }
 
   private handleError = (error: unknown) => {
@@ -27,7 +25,6 @@ class ServicesService extends ApiService {
           this.toasterService.toast("Вы не авторизованы", {
             type: "error",
           })
-
           break
         }
 
@@ -39,64 +36,58 @@ class ServicesService extends ApiService {
     throw error
   }
 
-  public getAll = async (
-    { isAdmin }: CommonServiceOptions = {},
-    meta?: { signal: AbortSignal }
-  ) => {
-    const url = isAdmin ? "/admin/services" : "/services"
-
-    const res = await this.baseAxiosInstance.get<{
+  public async getAll({ isAdmin }: CommonServiceOptions = {}, meta?: { signal: AbortSignal }) {
+    const endpoint = isAdmin ? `${this.ADMIN_PREFIX}` : this.BASE_SERVICES_PATH
+    return await this.baseAxiosInstance.get<{
       data: ServiceReduced[]
-    }>(url, { ...meta })
-
-    return res
+    }>(endpoint, { ...meta })
   }
 
-  public async getById(id: Service["id"]) {
-    const url = `admin/services/${id}`
-
-    const res = await this.baseAxiosInstance.get<{ data: Service }>(
-      url
-    )
-
-    return res.data.data
+  public async getById(
+    id: Service["id"],
+    { isAdmin }: CommonServiceOptions = {}
+  ): Promise<Service> {
+    const endpoint = isAdmin ? `${this.ADMIN_PREFIX}` : this.BASE_SERVICES_PATH
+    const { data } = await this.baseAxiosInstance.get<{ data: Service }>(`${endpoint}/${id}`)
+    return data.data
   }
 
-  public async create(payload: ServiceCreate) {
-    const url = "/admin/services/add"
-
-    const res = await this.baseAxiosInstance.post<{ data: Service }>(
-      url,
+  public async create(payload: ServiceCreate): Promise<Service> {
+    const { data } = await this.baseAxiosInstance.post<{ data: Service }>(
+      `${this.ADMIN_PREFIX}/add`,
       payload
     )
-    return res.data.data
+    return data.data
   }
 
-  public async delete(id: Service["id"]) {
-    const url = `admin/services/${id}/delete`
-
-    await this.baseAxiosInstance.delete(url)
+  public async delete(id: Service["id"]): Promise<void> {
+    await this.baseAxiosInstance.delete(`${this.ADMIN_PREFIX}/${id}/delete`)
   }
 
-  public async update(id: Service["id"], data: ServiceEdit) {
-    const url = `admin/services/${id}/update`
-
-    const res = await this.baseAxiosInstance.patch(url, data)
-    return res.data.data
+  public async update(id: Service["id"], data: ServiceEdit): Promise<Service> {
+    const response = await this.baseAxiosInstance.patch<{ data: Service }>(
+      `${this.ADMIN_PREFIX}/${id}/update`,
+      data
+    )
+    return response.data.data
   }
 
-  public async uploadPhoto(id: Service["id"], formData: FormData) {
-    const url = `admin/services/${id}/photo/upload`
+  // public async uploadPhoto(id: Service["id"], formData: FormData) {
+  //   const url = `admin/services/${id}/photo/upload`
 
-    return await this.baseAxiosInstance.post(url, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+  //   return await this.baseAxiosInstance.post(url, formData, {
+  //     headers: { "Content-Type": "multipart/form-data" },
+  //   })
+  // }
+
+  public async uploadPhoto(id: Service["id"], formData: FormData): Promise<AxiosResponse> {
+    return this.baseAxiosInstance.post(`${this.ADMIN_PREFIX}/${id}/photo/upload`, formData, {
+      headers: this.getHeaders("formData"),
     })
   }
 
-  public async deletePhoto(id: Service["id"]) {
-    const url = `admin/services/${id}/photo/delete`
-
-    await this.baseAxiosInstance.delete(url)
+  public async deletePhoto(id: Service["id"]): Promise<void> {
+    await this.baseAxiosInstance.delete(`${this.ADMIN_PREFIX}/${id}/photo/delete`)
   }
 }
 

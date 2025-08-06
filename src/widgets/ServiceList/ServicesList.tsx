@@ -1,74 +1,103 @@
-import { useServices } from "@/entities/service/model"
+import { useServices, type ServiceReduced } from "@/entities/service/model"
 import { ServiceCard } from "@/entities/service/ui"
-import {
-  ServiceCreateButton,
-  ServiceEditButton,
-} from "@/features/services/create-edit"
+import { ServiceCreateButton, ServiceEditButton } from "@/features/services/create-edit"
 import { ServiceDeleteButton } from "@/features/services/delete"
-import { Container, SimpleGrid, Stack, Text } from "@chakra-ui/react"
+import { Box, Code, Flex, Grid, Stack, Text } from "@chakra-ui/react"
+import { ServicesGrid } from "./ServicesGrid"
 import { ServicesListEmptyState } from "./ServicesListEmptyState"
 import { ServicesListSkeleton } from "./ServicesListSkeleton"
+import { ServicesSeparatedGrid } from "./ServicesSeparatedGrid"
 
-const gridStyles = {
-  maxW: { base: "100%", md: "80%", lg: "60%" },
-  gap: 4,
-  minChildWidth: "sm",
-  shadow: "xl",
-  padding: 4,
-  justifyContent: "start",
-  alignItems: "center",
-} as const
+interface Props {
+  withFeatures?: boolean
+  separateByType?: boolean
+  clickableCard?: boolean
+}
 
-export const ServicesList = () => {
-  const {
-    isLoading,
-    isPlaceholderData,
-    services,
-    isError,
-    error,
-    isEmpty,
-  } = useServices()
+export const ServicesList = ({
+  withFeatures = false,
+  separateByType = false,
+  clickableCard = true,
+}: Props) => {
+  const { isLoading, isPlaceholderData, services, isError, error, isEmpty } = useServices()
 
   if (isError) {
     return (
-      <Container>
-        <Text>{error.message}</Text>
-      </Container>
+      <>
+        <Text>Ошибка при получении услуг. Попробуйте позже</Text>
+        {import.meta.env.DEV && <Code>{error.message}</Code>}
+      </>
     )
   }
 
   if (isLoading) {
-    return (
-      <SimpleGrid {...gridStyles}>
+    return separateByType ? (
+      <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={6}>
         <ServicesListSkeleton />
-      </SimpleGrid>
+        <ServicesListSkeleton />
+      </Grid>
+    ) : (
+      <ServicesGrid>
+        <ServicesListSkeleton />
+      </ServicesGrid>
     )
   }
 
   if (isEmpty) {
-    return (
-      <SimpleGrid {...gridStyles}>
+    return separateByType ? (
+      <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={6}>
         <ServicesListEmptyState />
-      </SimpleGrid>
+        <ServicesListEmptyState />
+      </Grid>
+    ) : (
+      <ServicesGrid>
+        <ServicesListEmptyState />
+      </ServicesGrid>
+    )
+  }
+
+  const renderServiceCard = (service: ServiceReduced) => (
+    <ServiceCard
+      features={
+        withFeatures && (
+          <Stack direction="row" gap={{ base: 4, md: 2 }} alignItems={"end"}>
+            <ServiceEditButton id={service.id} />
+            <ServiceDeleteButton id={service.id} />
+          </Stack>
+        )
+      }
+      key={service.id}
+      {...service}
+      isDisabled={isPlaceholderData}
+      isLink={clickableCard}
+    />
+  )
+
+  if (separateByType) {
+    // fix: когда появятся эндпоинты получать отдельно с сервера основные и отдельно с сервера допы
+    const basicServices = services?.filter((service) => service.type === "basic") || []
+    const additionalServices = services?.filter((service) => service.type === "additional") || []
+
+    return (
+      <Flex shadow={"xl"} padding={6} flexDirection={"column"} rowGap={6}>
+        <ServicesSeparatedGrid
+          basicServices={basicServices}
+          additionalServices={additionalServices}
+          renderServiceCard={renderServiceCard}
+        />
+        <Box marginInline={"auto"}>
+          <ServiceCreateButton />
+        </Box>
+      </Flex>
     )
   }
 
   return (
-    <SimpleGrid {...gridStyles}>
-      {services?.map((service) => (
-        <ServiceCard
-          features={
-            <Stack direction="row" gap={4}>
-              <ServiceEditButton id={service.id} />
-              <ServiceDeleteButton id={service.id} />
-            </Stack>
-          }
-          key={service.id}
-          {...service}
-          isDisabled={isPlaceholderData}
-        />
-      ))}
-      <ServiceCreateButton />
-    </SimpleGrid>
+    <Flex shadow={"xl"} padding={6} flexDirection={"column"} rowGap={4}>
+      <ServicesGrid>{services?.map(renderServiceCard)}</ServicesGrid>
+      <Box marginInline={"auto"}>
+        <ServiceCreateButton />
+      </Box>
+    </Flex>
   )
 }

@@ -4,5 +4,5 @@ export {
   MESSAGES,
   ROUTES,
   TOKEN_EXPIRATION_DAYS,
-} from "../constants"
+} from "./constants"
 export { ToasterService } from "./toaster.service"

@@ -1,16 +1,15 @@
 import { InputGroup, NumberInput } from "@chakra-ui/react"
 import { RussianRuble } from "lucide-react"
-import { Controller, type Control } from "react-hook-form"
+import { Controller, type Control, type FieldValues, type Path } from "react-hook-form"
 
-type PriceControlProps = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: Control<any>
+type PriceControlProps<T extends FieldValues> = {
+  control: Control<T>
   defaultValue?: number | string
   step?: number
-  name: string
+  name: Path<T>
 }
 
-export const PriceControl = (props: PriceControlProps) => {
+export const PriceControl = <T extends FieldValues>(props: PriceControlProps<T>) => {
   const { control, defaultValue, step, name } = props
 
   return (

@@ -1,7 +1,3 @@
+export { loginSchema, type LoginFields, type SuccessLoginResponse } from "./types"
 export { useLoginForm } from "./useLoginForm"
-
-export {
-  type LoginFields,
-  loginSchema,
-  type SuccessLoginResponse,
-} from "./types"
+export { useProtectedPage } from "./useProtectedPage"

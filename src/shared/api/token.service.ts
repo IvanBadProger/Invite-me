@@ -6,13 +6,16 @@ export class TokenService {
 
   constructor() {}
 
-  public setToken(token: string) {
+  public setToken(token: string): void {
+    if (!token) return
+
     Cookies.set(this.COOKIE_KEY, token, {
       expires: TOKEN_EXPIRATION_DAYS,
+      path: "/",
     })
   }
 
-  public getToken(): string | undefined {
+  public getToken(): string | void {
     return Cookies.get(this.COOKIE_KEY)
   }
 
@@ -21,6 +24,7 @@ export class TokenService {
   }
 
   public hasToken(): boolean {
-    return !!Cookies.get(this.COOKIE_KEY)
+    const token = this.getToken()
+    return !!token
   }
 }

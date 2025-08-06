@@ -1,11 +1,16 @@
 import { useService } from "@/entities/service"
+import { useProtectedPage } from "@/features/auth"
 import { ServiceForm } from "@/features/services/create-edit"
-import { useServicePhoto } from "@/features/services/photo/model/useServicePhoto"
+import { useServicePhoto } from "@/features/services/photo"
+import { ROUTES } from "@/shared/lib"
 import {
   Box,
   Button,
   FileUpload,
+  Flex,
   Float,
+  Grid,
+  Heading,
   Image,
   type FileUploadFileAcceptDetails,
 } from "@chakra-ui/react"
@@ -14,14 +19,13 @@ import { useParams } from "react-router"
 
 const EditService = () => {
   const { id = "" } = useParams()
-  const { service } = useService(id ?? "")
+  const { service } = useService(id)
   const { isLoading, onDelete, onUpload } = useServicePhoto()
+  useProtectedPage(ROUTES.LOGIN)
 
   const onFileUpload = (data: FileUploadFileAcceptDetails) => {
     const formData = new FormData()
-
     formData.append("photo", data.files[0])
-
     onUpload({ id, formData })
   }
 
@@ -30,8 +34,13 @@ const EditService = () => {
   }
 
   return (
-    <>
-      <h1>edit Service</h1>
+    <Grid gap={4} templateColumns={{ base: "1fr", md: "1fr 1fr" }}>
+      <Heading as={"h1"} gridColumn={{ base: "initial", md: "span 2" }}>
+        Редактирование услуги &nbsp;
+        <Box as={"em"} fontWeight={"bold"}>
+          {service?.title}
+        </Box>
+      </Heading>
 
       <ServiceForm initialData={service} />
 
@@ -55,12 +64,10 @@ const EditService = () => {
           <FileUpload.HiddenInput />
           <FileUpload.Dropzone>
             <FileUpload.DropzoneContent>
-              <Box display="flex" alignItems="center" gap={2}>
+              <Flex alignItems="center" gap={2}>
                 <LucideUpload size={20} />
-                <Box>
-                  Перетащите фото сюда или кликните для выбора
-                </Box>
-              </Box>
+                <Box>Перетащите фото сюда или кликните для выбора</Box>
+              </Flex>
               <Box color="gray.500" fontSize="sm">
                 .png, .jpg (максимум 5MB на файл)
               </Box>
@@ -70,7 +77,7 @@ const EditService = () => {
           <FileUpload.List />
         </FileUpload.Root>
       )}
-    </>
+    </Grid>
   )
 }
 export default EditService

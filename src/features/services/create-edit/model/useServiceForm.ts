@@ -12,6 +12,8 @@ import { useBeforeUnload } from "react-router"
 import { DEFAULT_VALUES } from "../constants"
 
 export const useServiceForm = (initialData?: Service) => {
+  const queryClient = useQueryClient()
+
   const {
     control,
     reset,
@@ -24,25 +26,21 @@ export const useServiceForm = (initialData?: Service) => {
     resolver: zodResolver(serviceCreateSchema),
   })
 
-  const queryClient = useQueryClient()
   const mutation = useMutation({
     mutationKey: [serviceService.QUERY_KEY],
     mutationFn: (data: ServiceFormValues) =>
-      initialData
-        ? serviceService.update(initialData.id, data)
-        : serviceService.create(data),
+      initialData ? serviceService.update(initialData.id, data) : serviceService.create(data),
     onSuccess() {
       queryClient.invalidateQueries({
         queryKey: [serviceService.QUERY_KEY],
       })
+      reset()
     },
   })
 
   // fix: сделать работающим и сохранять в sessionStorage
   useBeforeUnload(() =>
-    isDirty
-      ? "У вас есть несохраненные изменения. Вы уверены, что хотите уйти?"
-      : undefined
+    isDirty ? "У вас есть несохраненные изменения. Вы уверены, что хотите уйти?" : undefined
   )
 
   useEffect(() => {

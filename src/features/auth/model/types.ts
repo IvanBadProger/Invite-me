@@ -7,17 +7,14 @@ export const LOGIN_RULES = {
   passwordMinLength: 1,
 }
 
-const { loginMinLength, loginMaxLength, passwordMinLength } =
-  LOGIN_RULES
+const { loginMinLength, loginMaxLength, passwordMinLength } = LOGIN_RULES
 
 export const loginSchema = z.object({
   login: z
     .string()
     .min(loginMinLength, MESSAGES.MIN_LENGTH(loginMinLength))
     .max(loginMaxLength, MESSAGES.MAX_LENGTH(loginMaxLength)),
-  password: z
-    .string()
-    .min(passwordMinLength, MESSAGES.MIN_LENGTH(passwordMinLength)),
+  password: z.string().min(passwordMinLength, MESSAGES.MIN_LENGTH(passwordMinLength)),
 })
 
 export type LoginFields = z.infer<typeof loginSchema>

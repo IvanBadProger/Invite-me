@@ -1,10 +1,13 @@
+import { useProtectedPage } from "@/features/auth"
 import { ServiceForm } from "@/features/services/create-edit"
+import { ROUTES } from "@/shared/lib"
 
 const CreateService = () => {
+  useProtectedPage(ROUTES.LOGIN)
+
   return (
     <>
-      <h1>CreateService</h1>
-
+      <h1>Создание услуги</h1>
       <ServiceForm />
     </>
   )

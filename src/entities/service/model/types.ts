@@ -1,55 +1,53 @@
 import { MESSAGES } from "@/shared/lib"
 import { z } from "zod"
 
-const serviceTypeSchema = z.union([
-  z.literal("basic"),
-  z.literal("additional"),
-])
+// 1. Базовые схемы валидации -----------------------------------
+const nonEmptyString = (message = MESSAGES.REQUIRED_FIELD) =>
+  z.string({ required_error: message }).trim().nonempty()
 
-export const serviceSchema = z.object({
-  id: z.string().nonempty(),
-  title: z
-    .string({ required_error: MESSAGES.REQUIRED_FIELD })
-    .trim()
-    .nonempty(),
+const positiveNumberString = z
+  .string()
+  .nonempty("Введите цену")
+  .refine(
+    (val) => {
+      const num = parseFloat(val)
+      return !isNaN(num) && num > 0
+    },
+    { message: "Значение должно быть корректным числом больше 0" }
+  )
+  .transform((val) => parseFloat(val).toFixed(2))
+
+// 2. Типы сервисов ---------------------------------------------
+export const SERVICE_TYPES = ["basic", "additional"] as const
+export type ServiceType = (typeof SERVICE_TYPES)[number]
+const serviceTypeSchema = z.enum(SERVICE_TYPES)
+
+// 3. Основная схема сервиса ------------------------------------
+const serviceBaseSchema = {
+  id: nonEmptyString(),
+  title: nonEmptyString(),
   description: z.string().trim().nullable().optional(),
-  price: z
-    .string()
-    .nonempty("Введите цену")
-    .refine(
-      (val) => {
-        const valueAsNumber = parseFloat(val)
-        return !isNaN(valueAsNumber) && valueAsNumber > 0
-      },
-      {
-        message: "Значение должно быть корректным числом больше 0",
-      }
-    )
-    .transform((val) => parseFloat(val).toFixed(2)),
+  price: positiveNumberString,
   type: serviceTypeSchema,
   workTime: z.string().optional(),
   photo_url: z.string().optional(),
   archived: z.boolean().optional(),
-})
+}
 
-export const serviceReducedSchema = serviceSchema.omit({
-  description: true,
-})
+export const serviceSchema = z.object(serviceBaseSchema)
 
-export const serviceCreateSchema = serviceSchema.omit({
-  id: true,
-  photo_url: true,
-})
+// 4. Производные схемы -----------------------------------------
+export const serviceReducedSchema = serviceSchema.omit({ description: true })
+export const serviceCreateSchema = serviceSchema.omit({ id: true, photo_url: true })
+export const serviceEditSchema = serviceCreateSchema.partial()
 
-export const ServiceEditSchema = serviceCreateSchema.partial()
-
+// 5. Экспорт типов ---------------------------------------------
 export type Service = z.infer<typeof serviceSchema>
 export type ServiceReduced = z.infer<typeof serviceReducedSchema>
 export type ServiceCreate = z.infer<typeof serviceCreateSchema>
-export type ServiceEdit = z.infer<typeof ServiceEditSchema>
+export type ServiceEdit = z.infer<typeof serviceEditSchema>
 
+// 6. Дополнительные типы ---------------------------------------
 export type CommonServiceOptions = Partial<{
   isAdmin: boolean
 }>
-
-export type ServiceType = z.infer<typeof serviceTypeSchema>

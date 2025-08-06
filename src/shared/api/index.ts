@@ -14,8 +14,7 @@ export const STATUS_CODES = {
   INTERNAL_SERVER_ERROR: 500,
 } as const
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ApiError<T extends Record<string, any>> = {
+export type ApiError<T extends Record<string, unknown>> = {
   message: string
   errors: Partial<Record<keyof T, string[]>>
 }
