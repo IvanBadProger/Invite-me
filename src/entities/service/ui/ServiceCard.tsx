@@ -1,5 +1,6 @@
 import { ROUTES } from "@/shared/lib"
-import { Badge, Box, Card, Flex, FormatNumber, Image, Text } from "@chakra-ui/react"
+import { ImageFallback } from "@/shared/ui"
+import { Badge, Card, FormatNumber, Image, Stack, Text, Wrap } from "@chakra-ui/react"
 import { useNavigate } from "react-router"
 import type { ServiceReduced, ServiceType } from "../model"
 
@@ -24,11 +25,12 @@ export const ServiceCard = ({
   title,
   type,
   archived,
-  workTime,
+  work_time,
   isLink,
 }: ServiceCardProps) => {
   const navigate = useNavigate()
   const isDisabled = archived
+  const isHoverable = isDisabled || !isLink
 
   const handleClick = () => {
     if (!isDisabled && isLink) {
@@ -39,31 +41,38 @@ export const ServiceCard = ({
   return (
     <Card.Root
       onClick={handleClick}
-      opacity={isDisabled ? 0.5 : 1}
-      pointerEvents={isDisabled ? "none" : "auto"}
-      cursor={archived ? "default" : "pointer"}
-      flexDirection={{ md: "row", base: "column" }}
-      padding={4}
+      cursor={isHoverable ? "default" : "pointer"}
+      position="relative"
+      w={"full"}
+      maxW={"xs"}
+      overflow={"hidden"}
+      transitionDuration={"fast"}
+      boxShadow={"md"}
+      _hover={{
+        transform: isHoverable ? "none" : "translateY(-2px)",
+        boxShadow: isHoverable ? "none" : "xl",
+        borderColor: isHoverable ? "gray.200" : "brand.pink.200",
+      }}
     >
-      <Card.Body gap={2} padding={2} flex={1}>
-        <ServiceHeader title={title} type={type} archived={archived} />
-        <ServiceInfo price={price} workTime={workTime} />
+      {photo_url ? (
+        <Image
+          src={photo_url}
+          alt={title}
+          objectFit="cover"
+          objectPosition={"center"}
+          opacity={isDisabled ? 0.6 : 1}
+          h={"150px"}
+        />
+      ) : (
+        <ImageFallback h={"150px"} />
+      )}
 
-        {features && <Box mt={2}>{features}</Box>}
+      <Card.Body flex={1} padding={4} opacity={isDisabled ? 0.5 : 1} gap={4}>
+        <ServiceHeader title={title} type={type} archived={archived} />
+        <ServiceInfo price={price} work_time={work_time} />
       </Card.Body>
 
-      {photo_url && (
-        <Box mt={{ base: 2, md: 0 }} ml={{ md: 4 }}>
-          <Image
-            rounded={"xl"}
-            src={photo_url}
-            alt={title}
-            width={{ base: "100%", md: 200 }}
-            height={200}
-            objectFit="cover"
-          />
-        </Box>
-      )}
+      {features && <Card.Footer>{features}</Card.Footer>}
     </Card.Root>
   )
 }
@@ -77,22 +86,20 @@ const ServiceHeader = ({
   type?: ServiceType
   archived?: boolean
 }) => (
-  <Flex direction="column" gap={2}>
-    <Card.Title>{title}</Card.Title>
-    <Flex gap={2} align="center" flexWrap="wrap">
-      {type && (
-        <Badge colorScheme={type === "basic" ? "blue" : "green"}>{SERVICE_TYPE_LABELS[type]}</Badge>
-      )}
+  <Stack gap={2}>
+    <Wrap gap={2}>
+      {type && <Badge bgColor={"brand.pink.100"}>{SERVICE_TYPE_LABELS[type]}</Badge>}
       {archived && <Badge colorScheme="red">{ARCHIVED_LABEL}</Badge>}
-    </Flex>
-  </Flex>
+    </Wrap>
+    <Card.Title maxLines={2}>{title}</Card.Title>
+  </Stack>
 )
 
-const ServiceInfo = ({ price, workTime }: { price: string; workTime?: string }) => (
-  <Flex gap={4} wrap="wrap" alignItems="center">
+const ServiceInfo = ({ price, work_time }: { price: string; work_time?: string }) => (
+  <Wrap gap={4}>
     <PriceDisplay price={price} />
-    {workTime && <WorkTimeDisplay workTime={workTime} />}
-  </Flex>
+    {work_time && <work_timeDisplay work_time={work_time} />}
+  </Wrap>
 )
 
 const PriceDisplay = ({ price }: { price: string }) => (
@@ -101,8 +108,8 @@ const PriceDisplay = ({ price }: { price: string }) => (
   </Text>
 )
 
-const WorkTimeDisplay = ({ workTime }: { workTime: string }) => (
+const work_timeDisplay = ({ work_time }: { work_time: string }) => (
   <Text textStyle="lg" fontWeight="medium" color="gray.600">
-    {workTime}
+    {work_time}
   </Text>
 )

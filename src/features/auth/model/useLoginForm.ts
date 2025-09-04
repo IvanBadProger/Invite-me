@@ -1,6 +1,8 @@
+import { ROUTES } from "@/shared/lib"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
+import { useNavigate } from "react-router"
 import { loginSchema, type LoginFields } from "."
 import { authService } from "../api/auth.service"
 import { useAuth } from "./useAuth"
@@ -8,6 +10,7 @@ import { useAuth } from "./useAuth"
 export const useLoginForm = () => {
   const setIsAuth = useAuth((state) => state.setIsAuth)
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   const {
     register,
@@ -26,12 +29,13 @@ export const useLoginForm = () => {
         queryKey: [authService.QUERY_KEY],
       })
     },
-    onSuccess() {
+    async onSuccess() {
       setIsAuth(true)
+      await navigate(ROUTES.DASHBOARD)
     },
   })
 
-  const onSubmit = (data: LoginFields) => {
+  const onSubmit = async (data: LoginFields) => {
     loginMutation.mutate(data)
   }
 

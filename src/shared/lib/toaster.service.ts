@@ -22,14 +22,6 @@ export class ToasterService {
     toast(content, { ...options, ...defaultOptions })
   }
 
-  // public toastApiErrors = <T extends Record<string, unknown>>(data: ApiError<T>) => {
-  //   Object.values(data.errors).forEach((messages) => {
-  //     if (messages && messages.length > 0) {
-  //       this.toast(messages[0], { type: "error" })
-  //     }
-  //   })
-  // }
-
   private formatApiErrorMessages<T extends Record<string, unknown>>(data: ApiError<T>): string[] {
     return Object.values(data.errors).flatMap((messages) => messages?.[0] ?? [])
   }

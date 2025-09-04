@@ -8,7 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
-import { useBeforeUnload } from "react-router"
 import { DEFAULT_VALUES } from "../constants"
 
 export const useServiceForm = (initialData?: Service) => {
@@ -20,6 +19,7 @@ export const useServiceForm = (initialData?: Service) => {
     register,
     handleSubmit,
     formState: { errors, isDirty },
+    getValues,
   } = useForm<ServiceFormValues>({
     mode: "onBlur",
     defaultValues: DEFAULT_VALUES,
@@ -34,18 +34,31 @@ export const useServiceForm = (initialData?: Service) => {
       queryClient.invalidateQueries({
         queryKey: [serviceService.QUERY_KEY],
       })
-      reset()
+      reset(initialData || DEFAULT_VALUES)
+      // sessionStorage.removeItem("unsavedServiceForm")
     },
   })
 
   // fix: сделать работающим и сохранять в sessionStorage
-  useBeforeUnload(() =>
-    isDirty ? "У вас есть несохраненные изменения. Вы уверены, что хотите уйти?" : undefined
-  )
+  // useBeforeUnload(
+  //   useCallback(() => {
+  //     if (isDirty) {
+  //       sessionStorage.setItem("unsavedServiceForm", JSON.stringify(getValues()))
+  //       return "У вас есть несохраненные изменения. Вы уверены, что хотите уйти?"
+  //     }
+  //   }, [isDirty, getValues])
+  // )
 
   useEffect(() => {
     reset(initialData)
   }, [reset, initialData])
+
+  // useEffect(() => {
+  //   const savedData = sessionStorage.getItem("unsavedServiceForm")
+  //   if (savedData && !initialData) {
+  //     reset(JSON.parse(savedData))
+  //   }
+  // }, [reset, initialData])
 
   const onSubmit = handleSubmit((data: ServiceFormValues) => {
     mutation.mutate(data)
@@ -58,5 +71,6 @@ export const useServiceForm = (initialData?: Service) => {
     register,
     errors,
     reset,
+    isDirty,
   }
 }

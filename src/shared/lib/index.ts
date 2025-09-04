@@ -1,3 +1,5 @@
+export { formatTimeString } from "./utils"
+
 export {
   BASE_API_URL,
   MAIN_TOAST_CONTAINER_ID,

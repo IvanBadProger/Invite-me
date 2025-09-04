@@ -4,6 +4,7 @@ import { ServiceForm } from "@/features/services/create-edit"
 import { useServicePhoto } from "@/features/services/photo"
 import { ROUTES } from "@/shared/lib"
 import {
+  Alert,
   Box,
   Button,
   FileUpload,
@@ -12,18 +13,24 @@ import {
   Grid,
   Heading,
   Image,
+  Skeleton,
   type FileUploadFileAcceptDetails,
 } from "@chakra-ui/react"
-import { LucideUpload } from "lucide-react"
+import { LucideUpload, X } from "lucide-react"
 import { useParams } from "react-router"
 
-const EditService = () => {
+export default function EditService() {
   const { id = "" } = useParams()
-  const { service } = useService(id)
-  const { isLoading, onDelete, onUpload } = useServicePhoto()
+  const {
+    service,
+    isLoading: isServiceLoading,
+    error: serviceError,
+    isError: isServiceError,
+  } = useService(id)
+  const { isLoading: isPhotoLoading, onDelete, onUpload } = useServicePhoto()
   useProtectedPage(ROUTES.LOGIN)
 
-  const onFileUpload = (data: FileUploadFileAcceptDetails) => {
+  const onFileUpload = async (data: FileUploadFileAcceptDetails) => {
     const formData = new FormData()
     formData.append("photo", data.files[0])
     onUpload({ id, formData })
@@ -33,8 +40,29 @@ const EditService = () => {
     onDelete(id)
   }
 
+  if (isServiceLoading) {
+    return (
+      <Grid templateColumns={{ base: "1fr", lg: "1fr 1fr" }} gap={8}>
+        <Skeleton height="400px" borderRadius="lg" />
+        <Skeleton height="300px" borderRadius="lg" />
+      </Grid>
+    )
+  }
+
+  if (isServiceError) {
+    return (
+      <Alert.Root status="error" borderRadius="lg">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>Не удалось загрузить услугу</Alert.Title>
+          <Alert.Description>{serviceError?.message || "Услуга не найдена"}</Alert.Description>
+        </Alert.Content>
+      </Alert.Root>
+    )
+  }
+
   return (
-    <Grid gap={4} templateColumns={{ base: "1fr", md: "1fr 1fr" }}>
+    <Grid gap={8} templateColumns={{ base: "1fr", md: "1fr 1fr" }}>
       <Heading as={"h1"} gridColumn={{ base: "initial", md: "span 2" }}>
         Редактирование услуги &nbsp;
         <Box as={"em"} fontWeight={"bold"}>
@@ -47,8 +75,8 @@ const EditService = () => {
       {service?.photo_url ? (
         <Box position="relative">
           <Float>
-            <Button type="button" onClick={onFileDelete}>
-              Удалить фото
+            <Button type="button" onClick={onFileDelete} aria-label="Удалить фото">
+              <X />
             </Button>
           </Float>
           <Image src={service.photo_url} alt="" />
@@ -59,7 +87,7 @@ const EditService = () => {
           alignItems="stretch"
           maxFiles={1}
           onFileAccept={onFileUpload}
-          disabled={isLoading}
+          disabled={isPhotoLoading}
         >
           <FileUpload.HiddenInput />
           <FileUpload.Dropzone>
@@ -80,4 +108,3 @@ const EditService = () => {
     </Grid>
   )
 }
-export default EditService

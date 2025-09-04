@@ -1,14 +1,11 @@
-import type {
-  ServiceCreate,
-  ServiceType,
-} from "@/entities/service/model"
+import type { ServiceCreate, ServiceType } from "@/entities/service/model"
 import type { Option } from "@/shared/ui"
 
 export const LABELS: Record<keyof ServiceCreate, string> = {
   title: "Название",
   description: "Описание",
   price: "Цена",
-  workTime: "Приблизительное время работы",
+  work_time: "Приблизительное время работы",
   archived: "Поместить в архив",
   type: "Тип",
 } as const
@@ -30,5 +27,5 @@ export const DEFAULT_VALUES = {
   price: "1000",
   title: "",
   type: TYPES[0].value as ServiceType,
-  workTime: "",
+  work_time: "0",
 }

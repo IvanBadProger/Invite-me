@@ -18,7 +18,7 @@ export const ServiceDeleteButton = (props: ServiceDeleteButtonProps) => {
 
   return (
     <Button
-      size={"xs"}
+      size={"sm"}
       variant={"subtle"}
       onClick={onClick}
       loading={isLoading}

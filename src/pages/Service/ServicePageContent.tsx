@@ -64,14 +64,14 @@ export const ServicePageContent = ({
                 </Text>
               </Box>
 
-              {service.workTime && (
+              {service.work_time && (
                 <Flex align="center" gap={3}>
                   <Box bg="blue.50" p={2} borderRadius="full">
                     <Icon as={Clock} boxSize={5} color="blue.500" />
                   </Box>
                   <Box>
                     <Text fontSize={{ base: "lg", md: "xl" }} fontWeight="medium">
-                      {service.workTime}
+                      {service.work_time}
                     </Text>
                     <Text fontSize="sm" color="gray.500">
                       Время выполнения

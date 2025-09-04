@@ -2,102 +2,122 @@ import { useServices, type ServiceReduced } from "@/entities/service/model"
 import { ServiceCard } from "@/entities/service/ui"
 import { ServiceCreateButton, ServiceEditButton } from "@/features/services/create-edit"
 import { ServiceDeleteButton } from "@/features/services/delete"
-import { Box, Code, Flex, Grid, Stack, Text } from "@chakra-ui/react"
-import { ServicesGrid } from "./ServicesGrid"
-import { ServicesListEmptyState } from "./ServicesListEmptyState"
-import { ServicesListSkeleton } from "./ServicesListSkeleton"
-import { ServicesSeparatedGrid } from "./ServicesSeparatedGrid"
+import { EmptyState, SkeletonList } from "@/shared/ui"
+import { Box, Flex, Heading, Stack } from "@chakra-ui/react"
+import type React from "react"
+import { useCallback, useMemo } from "react"
+import { ErrorState } from "./ErrorState"
+import { ServicesLayout } from "./ServicesGrid"
+import { ServicesSeparated, ServicesSeparatedLayout } from "./ServicesSeparatedGrid"
 
-interface Props {
+interface ServicesListProps {
   withFeatures?: boolean
   separateByType?: boolean
   clickableCard?: boolean
+  title?: string
+  showCreateButton?: boolean
 }
 
 export const ServicesList = ({
   withFeatures = false,
   separateByType = false,
   clickableCard = true,
-}: Props) => {
-  const { isLoading, isPlaceholderData, services, isError, error, isEmpty } = useServices()
-
-  if (isError) {
-    return (
-      <>
-        <Text>Ошибка при получении услуг. Попробуйте позже</Text>
-        {import.meta.env.DEV && <Code>{error.message}</Code>}
-      </>
-    )
-  }
-
-  if (isLoading) {
-    return separateByType ? (
-      <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={6}>
-        <ServicesListSkeleton />
-        <ServicesListSkeleton />
-      </Grid>
-    ) : (
-      <ServicesGrid>
-        <ServicesListSkeleton />
-      </ServicesGrid>
-    )
-  }
-
-  if (isEmpty) {
-    return separateByType ? (
-      <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={6}>
-        <ServicesListEmptyState />
-        <ServicesListEmptyState />
-      </Grid>
-    ) : (
-      <ServicesGrid>
-        <ServicesListEmptyState />
-      </ServicesGrid>
-    )
-  }
-
-  const renderServiceCard = (service: ServiceReduced) => (
-    <ServiceCard
-      features={
-        withFeatures && (
-          <Stack direction="row" gap={{ base: 4, md: 2 }} alignItems={"end"}>
-            <ServiceEditButton id={service.id} />
-            <ServiceDeleteButton id={service.id} />
-          </Stack>
-        )
-      }
-      key={service.id}
-      {...service}
-      isDisabled={isPlaceholderData}
-      isLink={clickableCard}
-    />
+  title,
+  showCreateButton = true,
+}: ServicesListProps) => {
+  const { isLoading, isPlaceholderData, services, isError, error, isEmpty, refetch } = useServices()
+  console.log("Это сервисы: ", services)
+  const { basicServices, additionalServices } = useMemo(
+    () => ({
+      basicServices: services?.filter((s) => s.type === "basic") || [],
+      additionalServices: services?.filter((s) => s.type === "additional") || [],
+    }),
+    [services]
   )
 
-  if (separateByType) {
-    // fix: когда появятся эндпоинты получать отдельно с сервера основные и отдельно с сервера допы
-    const basicServices = services?.filter((service) => service.type === "basic") || []
-    const additionalServices = services?.filter((service) => service.type === "additional") || []
+  const handleRetry = () => {
+    refetch()
+  }
 
-    return (
-      <Flex shadow={"xl"} padding={6} flexDirection={"column"} rowGap={6}>
-        <ServicesSeparatedGrid
+  const renderServiceCard = useCallback(
+    (service: ServiceReduced) => (
+      <ServiceCard
+        features={
+          withFeatures && (
+            <Stack direction="row" gap={{ base: 4, md: 2 }} alignItems="end">
+              <ServiceEditButton id={service.id} />
+              <ServiceDeleteButton id={service.id} />
+            </Stack>
+          )
+        }
+        key={service.id}
+        {...service}
+        isDisabled={isPlaceholderData}
+        isLink={clickableCard}
+      />
+    ),
+    [withFeatures, isPlaceholderData, clickableCard]
+  )
+
+  const renderFallback = useCallback(
+    (component: React.ReactNode) => {
+      if (separateByType) {
+        return (
+          <ServicesSeparatedLayout>
+            <Stack gap={4}>
+              <Heading textAlign={"center"}>Основные</Heading>
+              {component}
+            </Stack>
+            <Stack gap={4}>
+              <Heading textAlign={"center"}>Дополнительные</Heading>
+              {component}
+            </Stack>
+          </ServicesSeparatedLayout>
+        )
+      }
+
+      return <ServicesLayout>{component}</ServicesLayout>
+    },
+    [separateByType]
+  )
+
+  const renderContent = () => {
+    if (separateByType) {
+      return (
+        <ServicesSeparated
           basicServices={basicServices}
           additionalServices={additionalServices}
           renderServiceCard={renderServiceCard}
         />
-        <Box marginInline={"auto"}>
-          <ServiceCreateButton />
-        </Box>
-      </Flex>
-    )
+      )
+    }
+
+    return <ServicesLayout>{services?.map(renderServiceCard)}</ServicesLayout>
+  }
+
+  if (isError) {
+    return <ErrorState error={error} handleRetry={handleRetry} />
   }
 
   return (
-    <Flex shadow={"xl"} padding={6} flexDirection={"column"} rowGap={4}>
-      <ServicesGrid>{services?.map(renderServiceCard)}</ServicesGrid>
-      <Box marginInline={"auto"}>
-        <ServiceCreateButton />
-      </Box>
-    </Flex>
+    <Box boxShadow="sm" bg="white" borderRadius="xl" py={4} px={6}>
+      {title && (
+        <Heading size="xl" textAlign={"center"} mb={6}>
+          {title}
+        </Heading>
+      )}
+
+      {isLoading
+        ? renderFallback(<SkeletonList />)
+        : isEmpty
+        ? renderFallback(<EmptyState text="Услуг пока нет" />)
+        : renderContent()}
+
+      {showCreateButton && (
+        <Flex justify="center" mt={8}>
+          <ServiceCreateButton />
+        </Flex>
+      )}
+    </Box>
   )
 }

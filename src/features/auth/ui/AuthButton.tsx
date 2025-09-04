@@ -7,11 +7,17 @@ export const AuthButton = () => {
   const { isAuth, logout } = useLogout()
   const navigate = useNavigate()
 
-  const onClick = isAuth ? () => logout() : () => navigate(ROUTES.LOGIN)
+  if (isAuth) {
+    return (
+      <Button variant="outline" onClick={() => logout()} size="sm" colorScheme="red">
+        Выйти
+      </Button>
+    )
+  }
 
   return (
-    <Button variant={isAuth ? "outline" : "solid"} onClick={onClick}>
-      {isAuth ? "Выйти" : "Войти"}
+    <Button colorScheme="blue" onClick={() => navigate(ROUTES.LOGIN)} size="sm">
+      Войти
     </Button>
   )
 }

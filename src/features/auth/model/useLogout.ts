@@ -13,8 +13,8 @@ export const useLogout = () => {
       queryClient.invalidateQueries({
         queryKey: [authService.QUERY_KEY],
       })
-      queryClient.removeQueries()
       setIsAuth(false)
+      queryClient.removeQueries()
     },
   })
 

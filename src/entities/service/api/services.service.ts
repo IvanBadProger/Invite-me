@@ -72,14 +72,6 @@ class ServicesService extends ApiService {
     return response.data.data
   }
 
-  // public async uploadPhoto(id: Service["id"], formData: FormData) {
-  //   const url = `admin/services/${id}/photo/upload`
-
-  //   return await this.baseAxiosInstance.post(url, formData, {
-  //     headers: { "Content-Type": "multipart/form-data" },
-  //   })
-  // }
-
   public async uploadPhoto(id: Service["id"], formData: FormData): Promise<AxiosResponse> {
     return this.baseAxiosInstance.post(`${this.ADMIN_PREFIX}/${id}/photo/upload`, formData, {
       headers: this.getHeaders("formData"),

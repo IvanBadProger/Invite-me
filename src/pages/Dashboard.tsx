@@ -1,20 +1,20 @@
 import { useProtectedPage } from "@/features/auth"
 import { ROUTES } from "@/shared/lib"
 import { ServicesList } from "@/widgets"
-import { Heading } from "@chakra-ui/react"
+import { Heading, Stack } from "@chakra-ui/react"
 import { Outlet } from "react-router"
 
-const Dashboard = () => {
+export default function Dashboard() {
   useProtectedPage(ROUTES.LOGIN)
 
   return (
-    <>
-      <Heading as={"h1"}>Панель управления</Heading>
-      <ServicesList withFeatures clickableCard={false} />
+    <Stack justify={"center"} as={"section"} gap={4}>
+      <Heading as={"h1"} textAlign={"center"} size={"2xl"}>
+        Панель управления
+      </Heading>
 
+      <ServicesList withFeatures clickableCard={false} title="Услуги" />
       <Outlet />
-    </>
+    </Stack>
   )
 }
-
-export default Dashboard

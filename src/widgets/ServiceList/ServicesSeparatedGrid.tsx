@@ -1,17 +1,26 @@
 import type { ServiceReduced } from "@/entities/service"
 import { Grid, GridItem, Stack, Text } from "@chakra-ui/react"
 
-// fix: типизацию подвести
-export const ServicesSeparatedGrid = ({
-  basicServices,
-  additionalServices,
-  renderServiceCard,
-}: {
+export const ServicesSeparatedLayout = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={6}>
+      {children}
+    </Grid>
+  )
+}
+
+type Props = {
   basicServices: ServiceReduced[]
   additionalServices: ServiceReduced[]
   renderServiceCard: (service: ServiceReduced) => React.ReactNode
-}) => (
-  <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} gap={6}>
+}
+
+export const ServicesSeparated = ({
+  basicServices,
+  additionalServices,
+  renderServiceCard,
+}: Props) => (
+  <ServicesSeparatedLayout>
     <GridItem>
       <Text fontSize="xl" fontWeight="bold" mb={4}>
         Основные услуги
@@ -39,5 +48,5 @@ export const ServicesSeparatedGrid = ({
         )}
       </Stack>
     </GridItem>
-  </Grid>
+  </ServicesSeparatedLayout>
 )

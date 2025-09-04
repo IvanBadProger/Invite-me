@@ -1,6 +1,6 @@
 import type { Service } from "@/entities/service"
-import { Card, Flex, Icon, Image, Text } from "@chakra-ui/react"
-import { ImageIcon } from "lucide-react"
+import { ImageFallback } from "@/shared/ui"
+import { Card, Image } from "@chakra-ui/react"
 
 export const ImageSection = ({ title, photo_url }: Pick<Service, "title" | "photo_url">) => (
   <Card.Root
@@ -21,22 +21,10 @@ export const ImageSection = ({ title, photo_url }: Pick<Service, "title" | "phot
           objectFit="cover"
         />
       ) : (
-        <Flex
+        <ImageFallback
           height={{ base: "250px", md: "350px" }}
-          alignItems="center"
-          justifyContent="center"
-          bg="gray.50"
-          direction="column"
-          gap={3}
-        >
-          <Icon as={ImageIcon} boxSize={12} color="gray.400" />
-          <Text color="gray.500" fontSize="lg">
-            Изображение отсутствует
-          </Text>
-          <Text color="gray.400" fontSize="sm">
-            Для этой услуги не добавлено изображение
-          </Text>
-        </Flex>
+          helperText="Для этой услуги не добавлено изображение"
+        />
       )}
     </Card.Body>
   </Card.Root>

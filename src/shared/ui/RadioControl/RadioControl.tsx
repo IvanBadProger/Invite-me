@@ -1,4 +1,4 @@
-import { HStack, RadioGroup } from "@chakra-ui/react"
+import { Flex, RadioGroup } from "@chakra-ui/react"
 import { Controller, type Control, type FieldValues, type Path } from "react-hook-form"
 import type { Option } from "../Select/Select"
 
@@ -7,10 +7,11 @@ type RadioControlProps<T extends FieldValues> = {
   defaultValue?: string
   radioOptions: Option[]
   name: Path<T>
+  direction?: "column" | "row"
 }
 
 export const RadioControl = <T extends FieldValues>(props: RadioControlProps<T>) => {
-  const { control, defaultValue, radioOptions, name } = props
+  const { control, defaultValue, radioOptions, name, direction = "row" } = props
 
   return (
     <Controller
@@ -25,7 +26,7 @@ export const RadioControl = <T extends FieldValues>(props: RadioControlProps<T>)
             field.onChange(value)
           }}
         >
-          <HStack gap="6">
+          <Flex gap={4} flexDirection={direction}>
             {radioOptions.map((option) => (
               <RadioGroup.Item key={option.value} value={option.value}>
                 <RadioGroup.ItemHiddenInput onBlur={field.onBlur} />
@@ -33,7 +34,7 @@ export const RadioControl = <T extends FieldValues>(props: RadioControlProps<T>)
                 <RadioGroup.ItemText>{option.label}</RadioGroup.ItemText>
               </RadioGroup.Item>
             ))}
-          </HStack>
+          </Flex>
         </RadioGroup.Root>
       )}
     />

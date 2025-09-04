@@ -29,7 +29,7 @@ const serviceBaseSchema = {
   description: z.string().trim().nullable().optional(),
   price: positiveNumberString,
   type: serviceTypeSchema,
-  workTime: z.string().optional(),
+  work_time: z.string().optional(),
   photo_url: z.string().optional(),
   archived: z.boolean().optional(),
 }

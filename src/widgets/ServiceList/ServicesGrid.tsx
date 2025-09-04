@@ -1,12 +1,11 @@
-import { SimpleGrid } from "@chakra-ui/react"
+import { Wrap } from "@chakra-ui/react"
 
-const gridStyles = {
-  gap: 4,
-  minChildWidth: "sm",
-  justifyContent: "start",
-  alignItems: "stretch",
-} as const
+interface ServicesGridLayoutProps {
+  children: React.ReactNode
+}
 
-export const ServicesGrid = ({ children }: { children: React.ReactNode }) => (
-  <SimpleGrid {...gridStyles}>{children}</SimpleGrid>
+export const ServicesLayout = ({ children }: ServicesGridLayoutProps) => (
+  <Wrap gap={4} justifyContent={"start"} alignItems={"stretch"}>
+    {children}
+  </Wrap>
 )

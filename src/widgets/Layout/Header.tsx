@@ -6,15 +6,21 @@ import { NavLink } from "react-router"
 export const AdminLinks = () => {
   return (
     <Stack spaceX={4} direction={"row"} as={"ul"}>
-      <Link as={"li"}>
-        <NavLink to={ROUTES.HOME}>Главная</NavLink>
-      </Link>
-      <Link as={"li"}>
-        <NavLink to={ROUTES.DASHBOARD}>Панель управления</NavLink>
-      </Link>
-      <Link as={"li"}>
-        <AuthButton />
-      </Link>
+      <Center as="li">
+        <Link asChild>
+          <NavLink to={ROUTES.HOME}>Главная</NavLink>
+        </Link>
+      </Center>
+      <Center as="li">
+        <Link asChild>
+          <NavLink to={ROUTES.DASHBOARD}>Панель управления</NavLink>
+        </Link>
+      </Center>
+      <Center as="li">
+        <Link asChild>
+          <AuthButton />
+        </Link>
+      </Center>
     </Stack>
   )
 }

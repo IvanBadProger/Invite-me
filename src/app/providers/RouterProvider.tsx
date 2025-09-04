@@ -1,6 +1,5 @@
 import { ROUTES } from "@/shared/lib"
 import { Layout } from "@/widgets/"
-import { Container } from "@chakra-ui/react"
 import { lazy } from "react"
 import { BrowserRouter, Route, Routes } from "react-router"
 
@@ -13,21 +12,19 @@ const Service = lazy(() => import("@/pages/Service/Service"))
 
 export const RouterProvider = () => {
   return (
-    <Container maxW="container.xl" mx={"auto"}>
-      <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path={ROUTES.HOME} element={<Home />} />
-            <Route path={ROUTES.LOGIN} element={<Login />} />
-            <Route path={ROUTES.SERVICE(":id")} element={<Service />} />
-            <Route path={ROUTES.DASHBOARD}>
-              <Route index element={<Dashboard />} />
-              <Route path={"services-create"} element={<CreateService />} />
-              <Route path={"services/:id"} element={<EditService />} />
-            </Route>
-          </Routes>
-        </Layout>
-      </BrowserRouter>
-    </Container>
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          <Route path={ROUTES.HOME} element={<Home />} />
+          <Route path={ROUTES.LOGIN} element={<Login />} />
+          <Route path={ROUTES.SERVICE(":id")} element={<Service />} />
+          <Route path={ROUTES.DASHBOARD}>
+            <Route index element={<Dashboard />} />
+            <Route path={"services-create"} element={<CreateService />} />
+            <Route path={"services/:id"} element={<EditService />} />
+          </Route>
+        </Routes>
+      </Layout>
+    </BrowserRouter>
   )
 }
